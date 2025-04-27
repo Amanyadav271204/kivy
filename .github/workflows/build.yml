@@ -8,23 +8,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install required Android SDK components
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip
-          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-          unzip commandlinetools-linux-9477386_latest.zip -d cmdline-tools
-          mkdir -p $HOME/android-sdk/cmdline-tools/latest
-          mv cmdline-tools/* $HOME/android-sdk/cmdline-tools/latest/
-          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk --licenses
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk \
-            "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+      - name: Cache Buildozer .buildozer folder
+        uses: actions/cache@v4
+        with:
+          path: |
+            .buildozer
+          key: ${{ runner.os }}-buildozer-${{ hashFiles('**/*.spec') }}
+          restore-keys: |
+            ${{ runner.os }}-buildozer-
 
       - name: Build APK
         uses: digreatbrian/buildozer-action@v2
         with:
           python-version: 3.11
-          buildozer-cmd: buildozer -v android debug
+          buildozer-cmd: |
+            pip install --upgrade pip setuptools wheel
+            pip install buildozer
+            buildozer android update
+            buildozer -v android debug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
