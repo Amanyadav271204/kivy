@@ -1,1 +1,36 @@
+on:
+  push:
+    branches: [ main ]
 
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build APK
+        uses: digreatbrian/buildozer-action@v2
+        with:
+          python-version: 3.11
+          buildozer-cmd: buildozer -v android debug
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: package
+          path: ./bin/*.apk
+
+### buildozer.spect
+
+Use these configurations
+
+# (int) Target Android API, should be as high as possible.
+android.api = 34
+
+# (int) Minimum API your APK / AAB will support.
+android.minapi = 21
+
+# (int) Android SDK version to use
+android.sdk = 34
+
+# (str) Android NDK version to use
+android.ndk = 25b
