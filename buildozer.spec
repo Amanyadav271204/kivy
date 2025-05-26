@@ -1,10 +1,9 @@
 [app]
-
 # (str) Title of your application
-title =  "ConnectionMonitorApp"
+title = ConnectionMonitorApp
 
 # (str) Package name
-package.name = myapp
+package.name = connectionmonitor
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.test
@@ -14,8 +13,9 @@ source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
 source.include_exts = py,png,jpg,kv,atlas
-source.include = main2.py
+source.include = main.py
 target = android
+
 
 # (list) List of inclusions using pattern matching
 #source.include_patterns = assets/*,images/*.png
@@ -99,7 +99,7 @@ fullscreen = 0
 # (list) Permissions
 # (See https://python-for-android.readthedocs.io/en/latest/buildoptions/#build-options-1 for all the supported syntaxes and properties)
 #android.permissions = android.permission.INTERNET, (name=android.permission.WRITE_EXTERNAL_STORAGE;maxSdkVersion=18)
-
+android.permissions = INTERNET
 # (list) features (adds uses-feature -tags to manifest)
 #android.features = android.hardware.usb.host
 
@@ -282,7 +282,7 @@ fullscreen = 0
 #android.adb_args = -H host.docker.internal
 
 # (bool) Copy library instead of making a libpymodules.so
-#android.copy_libs = 1
+android.copy_libs = 1
 
 # (list) The Android archs to build for, choices: armeabi-v7a, arm64-v8a, x86, x86_64
 # In past, was `android.arch` as we weren't supporting builds for multiple archs at the same time.
