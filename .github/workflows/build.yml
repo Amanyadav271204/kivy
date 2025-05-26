@@ -15,7 +15,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt update
-          sudo apt install -y zip unzip openjdk-11-jdk libtinfo5 libncurses5 libgl1-mesa-dev libgles2-mesa-dev wget
+          sudo apt install -y zip unzip openjdk-11-jdk libtinfo5 libncurses5 libgl1-mesa-dev libgles2-mesa-dev wget aidl
 
       - name: Install Android SDK + AIDL
         run: |
