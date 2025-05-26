@@ -1,3 +1,5 @@
+name: Build APK
+
 on:
   push:
     branches: [ main ]
@@ -5,15 +7,45 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Build APK
-        uses: digreatbrian/buildozer-action@v2
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y zip unzip openjdk-11-jdk libtinfo5 libncurses5 libgl1-mesa-dev libgles2-mesa-dev wget
+
+      - name: Install Android SDK + AIDL
+        run: |
+          mkdir -p $HOME/android-sdk/cmdline-tools
+          cd $HOME/android-sdk/cmdline-tools
+          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O tools.zip
+          unzip tools.zip
+          mv cmdline-tools latest
+          export ANDROID_SDK_ROOT=$HOME/android-sdk
+          export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
+          yes | sdkmanager --sdk_root=${ANDROID_SDK_ROOT} --licenses
+          sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platform-tools" "platforms;android-31" "build-tools;31.0.0"
+
+      - name: Set up Python & pip
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11
-          buildozer-cmd: buildozer -v android debug
 
-      - name: Upload artifacts
+      - name: Install Buildozer
+        run: |
+          python -m pip install --upgrade pip
+          pip install buildozer cython virtualenv
+
+      - name: Build APK
+        run: |
+          export ANDROIDSDK=$HOME/android-sdk
+          export PATH=$ANDROIDSDK/platform-tools:$PATH
+          buildozer -v android debug
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: package
